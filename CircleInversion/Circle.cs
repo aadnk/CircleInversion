@@ -32,16 +32,16 @@ namespace CircleInversion
         }
 
         /// <summary>
-        /// Calculate the distance from a given point to the center of the circle.
+        /// Calculate the squared distance from a given point to the center of the circle.
         /// </summary>
         /// <param name="x">X coordinate of the point.</param>
         /// <param name="y">Y coordinate of the point.</param>
-        /// <returns>The distance.</returns>
-        public double DistanceToCenter(float x, float y)
+        /// <returns>The squared distance.</returns>
+        public double SquaredDistanceToCenter(float x, float y)
         {
             var dX = Center.X - x;
             var dY = Center.Y - y;
-            return Math.Sqrt(dX * dX + dY * dY);
+            return dX * dX + dY * dY;
         }
 
         /// <summary>

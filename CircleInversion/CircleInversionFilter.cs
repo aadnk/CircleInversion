@@ -21,21 +21,37 @@ namespace CircleInversion
         /// Apply the inversion filter to every point outside the circle in the bitmap.
         /// </summary>
         /// <param name="bitmap">The bitmap to modify.</param>
-        public void FilterBitmap(Bitmap bitmap)
+        public unsafe void FilterBitmap(Bitmap bitmap)
         {
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    double originalDistance = Circle.DistanceToCenter(x, y);
+            var rect = new Rectangle(Point.Empty, bitmap.Size);
+            //var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
-                    // Skip the inside of the circle
-                    if (originalDistance < Circle.Radius)
-                        continue;
-                    // Get the corresponding inner point
-                    PointF innerPoint = FilterPoint(x, y);
-                    bitmap.SetPixel(x, y, bitmap.GetPixel((int)innerPoint.X, (int)innerPoint.Y));
+            try
+            {
+                //int* source = (int*)data.Scan0;
+
+                for (int y = 0; y < rect.Height; y++)
+                {
+                    for (int x = 0; x < rect.Width; x++)
+                    {
+                        double squaredDistance = Circle.SquaredDistanceToCenter(x, y);
+
+                        // Skip the inside of the circle
+                        if (squaredDistance < Circle.SquaredRadius)
+                            continue;
+
+                        double ratio = Circle.SquaredRadius / squaredDistance;
+                        int srcX = (int) (ratio * (x - Circle.Center.X) + Circle.Center.X);
+                        int srcY = (int) (ratio * (y - Circle.Center.Y) + Circle.Center.Y);
+
+                        // Get the corresponding inner point
+                        bitmap.SetPixel(x, y, bitmap.GetPixel(srcX, srcY));
+                    }
                 }
+            }
+            finally
+            {
+                //bitmap.UnlockBits(data);
             }
         }
 
@@ -58,9 +74,8 @@ namespace CircleInversion
         public PointF FilterPoint(float x, float y)
         {
             // d_0 * d_1 = r^2 => d_1 = r^2 / d_0
-            double originalDistance = Circle.DistanceToCenter(x, y);
-            double newDistance = Circle.SquaredRadius / originalDistance;
-            double ratio = newDistance / originalDistance;
+            double squaredDistance = Circle.SquaredDistanceToCenter(x, y);
+            double ratio = Circle.SquaredRadius / squaredDistance;
 
             // Similar triangles - the ratio will be the same
             return new PointF(
