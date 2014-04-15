@@ -55,6 +55,11 @@ namespace CircleInversion.Tools
             }
         }
 
+        public void OnSurfaceDrawing(IDestinationSurface surface, Graphics g)
+        {
+            // Do nothing
+        }
+
         public void OnMouseUp(IDestinationSurface surface, MouseButtons button, Point location)
         {
             currentPoint = null;

@@ -52,6 +52,13 @@ namespace CircleInversion.Tools
         /// <param name="button">The released mouse button.</param>
         /// <param name="location">The current location.</param>
         void OnMouseUp(IDestinationSurface surface, MouseButtons button, Point location);
+
+        /// <summary>
+        /// Invoked when the surface is drawing.
+        /// </summary>
+        /// <param name="surface">The surface.</param>
+        /// <param name="g">The graphics context.</param>
+        void OnSurfaceDrawing(IDestinationSurface surface, Graphics g);
     }
 
     public interface IDestinationSurface

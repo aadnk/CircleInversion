@@ -29,32 +29,56 @@ namespace CircleInversion.Tools
 {
     class ToolLine : ITool
     {
-        private Brush copy;
         private Point? startingPoint;
+        private Point? currentPoint;
 
         public void OnMouseDown(IDestinationSurface surface, Point location)
         {
-            copy = new TextureBrush(surface.FinalImage);
             startingPoint = location;
+            currentPoint = null;
         }
 
         public void OnMouseMove(IDestinationSurface surface, MouseButtons button, Point location)
         {
-            var rect = new RectangleF(Point.Empty, surface.FinalImage.Size);
-
             if (startingPoint != null)
+            {
+                currentPoint = location;
+                surface.InvalidateImage();
+            }
+        }
+
+        public void OnSurfaceDrawing(IDestinationSurface surface, Graphics g)
+        {
+            if (startingPoint != null && currentPoint != null)
+            {
+                DrawLine(surface, g, startingPoint.Value, currentPoint.Value);                    
+            }
+        }
+
+        public void OnMouseUp(IDestinationSurface surface, MouseButtons button, Point location)
+        {
+            // Draw line on the original
+            if (startingPoint != null && currentPoint != null)
             {
                 using (var g = Graphics.FromImage(surface.FinalImage))
                 {
-                    g.FillRectangle(copy, rect);
-                    g.DrawLine(Pens.Black, startingPoint.Value, location);
-
-                    // Draw the filtered path
-                    var path = GenerateFilteredPath(surface.Filter, startingPoint.Value, location, rect);
-                    g.DrawPath(Pens.Black, path);
+                    DrawLine(surface, g, startingPoint.Value, currentPoint.Value);  
                 }
-                surface.InvalidateImage();
             }
+
+            // And we have a result
+            startingPoint = null;
+            currentPoint = null;
+        }
+
+        private void DrawLine(IDestinationSurface surface, Graphics g, PointF starting, PointF ending)
+        {
+            var rect = new RectangleF(Point.Empty, surface.FinalImage.Size);
+            g.DrawLine(Pens.Black, startingPoint.Value, currentPoint.Value);
+
+            // Draw the filtered path
+            var path = GenerateFilteredPath(surface.Filter, starting, ending, rect);
+            g.DrawPath(Pens.Black, path);
         }
 
         private GraphicsPath GenerateFilteredPath(CircleInversionFilter filter, PointF start, PointF end, RectangleF display)
@@ -121,19 +145,6 @@ namespace CircleInversion.Tools
             var dX = a.X - b.X;
             var dY = a.Y - b.Y;
             return Math.Sqrt(dX * dX + dY * dY);
-        }
-
-        public void OnMouseUp(IDestinationSurface surface, MouseButtons button, Point location)
-        {
-            // Clean up original
-            if (copy != null)
-            {
-                copy.Dispose();
-                copy = null;
-            }
-
-            // And we have a result
-            startingPoint = null;
         }
     }
 }

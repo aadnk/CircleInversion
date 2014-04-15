@@ -146,6 +146,11 @@ namespace CircleInversion
         private void PictureContainer_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImageUnscaled(FinalImage, Point.Empty);
+            
+            if (tool != null)
+            {
+                tool.OnSurfaceDrawing(this, e.Graphics);
+            }
         }
 
         private Circle ComputeCircle(float radiusScale)
