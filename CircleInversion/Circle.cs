@@ -35,6 +35,22 @@ namespace CircleInversion
         public float SquaredRadius { get; private set; }
         public RectangleF BoundingBox { get; private set; }
 
+        /// <summary>
+        /// Construct a new circle from center coordinates and a radius.
+        /// </summary>
+        /// <param name="centerX">The center x-coordinate.</param>
+        /// <param name="centerY">The center y-coordinate.</param>
+        /// <param name="radius">The radius.</param>
+        public Circle(float centerX, float centerY, float radius)
+            : this(new PointF(centerX, centerY), radius)
+        {
+        }
+
+        /// <summary>
+        /// Construct a new circle from a center and a radius.
+        /// </summary>
+        /// <param name="center">The center point in the XY-plane.</param>
+        /// <param name="radius">The radius.</param>
         public Circle(PointF center, float radius)
         {
             this.Center = center;
@@ -43,9 +59,81 @@ namespace CircleInversion
             this.BoundingBox = new RectangleF(Center.X - Radius, Center.Y - Radius, Diameter, Diameter);
         }
 
+        /// <summary>
+        /// Construct a circle that passes through the three points. 
+        /// </summary>
+        /// <param name="a">First point.</param>
+        /// <param name="b">Second point.</param>
+        /// <param name="c">Third point.</param>
+        /// <returns>The unique circle, or NULL if the points are colinear.</returns>
+        public static Circle FromPoints(PointF a, PointF b, PointF c)
+        {
+            double A = b.X - a.X;
+            double B = b.Y - a.Y;
+            double C = c.X - a.X;
+            double D = c.Y - a.Y;
+
+            double E = A * (a.X + b.X) + B * (a.Y + b.Y);
+            double F = C * (a.X + c.X) + D * (a.Y + c.Y);
+
+            double G = 2 * (A * (c.Y - b.Y) - B * (c.X - b.X));
+            if (G == 0.0)
+                return null;
+
+            // Circle center
+            double px = (D * E - B * F) / G;
+            double py = (A * F - C * E) / G;
+            
+            // Circle radius
+            double dx = a.X - px;
+            double dy = a.Y - py;
+            double radius = Math.Sqrt(dx * dx + dy * dy);
+
+            return new Circle((float)px, (float)py, (float)radius);
+        }
+
+        /// <summary>
+        /// Calculate the angle from the center to the given point, measured from the x-axis.
+        /// </summary>
+        /// <param name="x">The point.</param>
+        /// <returns>The resulting angle in degrees (0, 360).</returns>
+        public double Angle(PointF point)
+        {
+            return Angle(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Calculate the angle from the center to the given point, measured from the x-axis.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the point.</param>
+        /// <param name="y">The y-coordinate of the point.</param>
+        /// <returns>The resulting angle in degrees (0, 360)</returns>
+        public double Angle(float x, float y)
+        {
+            double angle = Math.Atan2(y - Center.Y, x - Center.X);
+
+            if (angle < 0)
+                angle += 2 * Math.PI;
+            return angle * (180.0 / Math.PI);
+        }
+
+        /// <summary>
+        /// Retrieve the full diameter of the circle.
+        /// </summary>
         public float Diameter
         {
             get { return Radius * 2; }
+        }
+
+        /// <summary>
+        /// Calculate the distance from a given point to the center of the circle.
+        /// </summary>
+        /// <param name="x">X coordinate of the point.</param>
+        /// <param name="y">Y coordinate of the point.</param>
+        /// <returns>The distance.</returns>
+        public double Distance(float x, float y)
+        {
+            return Math.Sqrt(SquaredDistance(x, y));
         }
 
         /// <summary>
@@ -54,7 +142,7 @@ namespace CircleInversion
         /// <param name="x">X coordinate of the point.</param>
         /// <param name="y">Y coordinate of the point.</param>
         /// <returns>The squared distance.</returns>
-        public double SquaredDistanceToCenter(float x, float y)
+        public double SquaredDistance(float x, float y)
         {
             var dX = Center.X - x;
             var dY = Center.Y - y;

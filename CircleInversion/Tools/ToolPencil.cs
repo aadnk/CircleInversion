@@ -48,7 +48,8 @@ namespace CircleInversion.Tools
 
                     g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                     g.DrawLine(Pens.Black, from, to);
-                    g.DrawLine(Pens.DarkBlue, filter.FilterPoint(from), filter.FilterPoint(to));
+                    //g.DrawLine(Pens.DarkBlue, filter.FilterPoint(from), filter.FilterPoint(to));
+                    g.DrawPath(Pens.DarkBlue, surface.Filter.FilterLine(from, to));
                 }
                 surface.InvalidateImage();
                 currentPoint = location;
