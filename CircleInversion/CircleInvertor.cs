@@ -68,11 +68,16 @@ namespace CircleInversion
             FinalImage = PrepareBitmap(FinalImage, PictureContainer.Width, PictureContainer.Height);
             Filter = new CircleInversionFilter(currentCircle);
 
+            DrawGrayCircle();
+            PictureContainer.Invalidate();
+        }
+
+        private void DrawGrayCircle()
+        {
             using (var g = Graphics.FromImage(FinalImage))
             {
-                g.DrawEllipse(Pens.Gray, currentCircle.BoundingBox);
+                g.DrawEllipse(Pens.Gray, Filter.Circle.BoundingBox);
             }
-            PictureContainer.Invalidate();
         }
 
         private void InitializeTool()
@@ -137,16 +142,22 @@ namespace CircleInversion
             return new Circle(center, (float)(radius * radiusScale));
         }
 
-        private void buttonInvert_Click(object sender, EventArgs e)
+        private void ComputeInverse()
         {
             var watch = new Stopwatch();
 
             watch.Start();
             Filter.FilterBitmap(FinalImage);
+            DrawGrayCircle();
             watch.Stop();
 
             PictureContainer.Invalidate();
             Text = "Computed inverse in " + watch.Elapsed.TotalMilliseconds + " ms";
+        }
+
+        private void buttonInvert_Click(object sender, EventArgs e)
+        {
+            ComputeInverse();
         }
 
         private void buttonImport_Click(object sender, EventArgs e)
@@ -160,7 +171,9 @@ namespace CircleInversion
                     g.Clip = Filter.Circle.ToRegion();
                     g.DrawImage(image, Filter.Circle.BoundingBox);
                 }
-                PictureContainer.Invalidate();
+
+                // Now compute the inverse
+                ComputeInverse();
             }
         }
 
