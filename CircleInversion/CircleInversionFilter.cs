@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CircleInversion
 {
-    class CircleInversionFilter
+    public class CircleInversionFilter
     {
         public Circle Circle { get; private set;}
 
@@ -24,11 +24,16 @@ namespace CircleInversion
         public unsafe void FilterBitmap(Bitmap bitmap)
         {
             var rect = new Rectangle(Point.Empty, bitmap.Size);
-            //var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppPArgb);
 
             try
             {
-                //int* source = (int*)data.Scan0;
+                int* original = (int*)data.Scan0;
+                int* current = (int*)original;
+                int scanWidth = data.Stride / sizeof(int);
+
+                int centerX = (int)Circle.Center.X;
+                int centerY = (int)Circle.Center.Y;
 
                 for (int y = 0; y < rect.Height; y++)
                 {
@@ -38,20 +43,24 @@ namespace CircleInversion
 
                         // Skip the inside of the circle
                         if (squaredDistance < Circle.SquaredRadius)
+                        {
+                            current++; 
                             continue;
+                        }
 
                         double ratio = Circle.SquaredRadius / squaredDistance;
-                        int srcX = (int) (ratio * (x - Circle.Center.X) + Circle.Center.X);
-                        int srcY = (int) (ratio * (y - Circle.Center.Y) + Circle.Center.Y);
+                        int srcX = (int)(ratio * (x - centerX)) + centerX;
+                        int srcY = (int)(ratio * (y - centerY)) + centerY;
 
                         // Get the corresponding inner point
-                        bitmap.SetPixel(x, y, bitmap.GetPixel(srcX, srcY));
+                        *(current++) = *(original + srcX + srcY * scanWidth);
                     }
+                    current += scanWidth - data.Width;
                 }
             }
             finally
             {
-                //bitmap.UnlockBits(data);
+                bitmap.UnlockBits(data);
             }
         }
 

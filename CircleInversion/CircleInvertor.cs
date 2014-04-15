@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CircleInversion.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,86 +14,116 @@ using System.Windows.Forms;
 
 namespace CircleInversion
 {
-    public partial class CircleInvertor : Form
+    public partial class CircleInvertor : Form, IDestinationSurface
     {
-        // Handle a drawing operation
-        private Bitmap bitmap;
-        private Point? previousPoint;
+        // Current image
+        public Bitmap FinalImage { get; private set; }
 
         // Circle inversion
-        private CircleInversionFilter currentFilter;
+        public CircleInversionFilter Filter { get; private set; }
+
+        // Current tool
+        private ITool tool;
+
+        // Detect minimizing
+        private bool wasMaximized;
+
+        public void InvalidateImage()
+        {
+            PictureContainer.Invalidate();
+            PictureContainer.Update();
+        }
 
         public CircleInvertor()
         {
             InitializeComponent();
+            InitializeTool();
             InitializeCircle();
         }
 
         private void CircleInvertor_ResizeEnd(object sender, EventArgs e)
         {
+            if (FinalImage != null && FinalImage.Width == PictureContainer.Width && FinalImage.Height == PictureContainer.Height)
+                return;
             InitializeCircle();
         }
 
         private void CircleInvertor_SizeChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Maximized)
+            bool isMaximized = this.WindowState == FormWindowState.Maximized;
+
+            if (isMaximized || wasMaximized)
             {
                 InitializeCircle();
+                wasMaximized = isMaximized;
             }
         }
 
         private void InitializeCircle()
         {
-            // Clean up existing resources
-            if (bitmap != null)
-            {
-                bitmap.Dispose();
-            }
-            var currentCircle = ComputeCircle(0.5f);
+            var currentCircle = ComputeCircle((float)circleSizeSelector.Value);
+            Debug.Print("InitializeCircle to " + PictureContainer.Width + ", " + PictureContainer.Height);
 
             // Prepare background image
-            bitmap = new Bitmap(PictureContainer.Width, PictureContainer.Height, PixelFormat.Format32bppArgb);
-            currentFilter = new CircleInversionFilter(currentCircle);
+            FinalImage = PrepareBitmap(FinalImage, PictureContainer.Width, PictureContainer.Height);
+            Filter = new CircleInversionFilter(currentCircle);
 
-            using (var g = Graphics.FromImage(bitmap))
+            using (var g = Graphics.FromImage(FinalImage))
             {
                 g.DrawEllipse(Pens.Gray, currentCircle.BoundingBox);
             }
             PictureContainer.Invalidate();
         }
 
+        private void InitializeTool()
+        {
+            if (toolPencil.Checked)
+                tool = new ToolPencil();
+            if (toolLine.Checked)
+                tool = new ToolLine();
+        }
+
+        private Bitmap PrepareBitmap(Bitmap existing, int width, int height)
+        {
+            Bitmap result = existing;
+
+            // Create a new bitmap
+            if (result == null || result.Width != width || result.Height != height)
+            {
+                // Clean up existing resources
+                if (result != null)
+                {
+                    result.Dispose();
+                }
+                result = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
+            }
+
+            // Clear bitmap content
+            using (var g = Graphics.FromImage(result))
+            {
+                g.Clear(Color.White);
+            }
+            return result;
+        }
+
         private void PictureContainer_MouseDown(object sender, MouseEventArgs e)
         {
-            previousPoint = e.Location;
+            tool.OnMouseDown(this, e.Location);
         }
 
         private void PictureContainer_MouseMove(object sender, MouseEventArgs e)
         {
-            if (previousPoint != null)
-            {
-                // Draw line segment
-                using (var g = Graphics.FromImage(bitmap))
-                {
-                    var from = previousPoint.Value;
-                    var to = e.Location;
-
-                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    g.DrawLine(Pens.Black, from, to);
-                    g.DrawLine(Pens.DarkBlue, currentFilter.FilterPoint(from), currentFilter.FilterPoint(to));
-                }
-                previousPoint = e.Location;
-                PictureContainer.Invalidate();
-            }
+            tool.OnMouseMove(this, e.Button, e.Location);
         }
 
         private void PictureContainer_MouseUp(object sender, MouseEventArgs e)
         {
-            previousPoint = null;
+            tool.OnMouseUp(this, e.Button, e.Location);
         }
 
         private void PictureContainer_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawImageUnscaled(bitmap, Point.Empty);
+            e.Graphics.DrawImageUnscaled(FinalImage, Point.Empty);
         }
 
         private Circle ComputeCircle(float radiusScale)
@@ -111,11 +142,11 @@ namespace CircleInversion
             var watch = new Stopwatch();
 
             watch.Start();
-            currentFilter.FilterBitmap(bitmap);
+            Filter.FilterBitmap(FinalImage);
             watch.Stop();
 
             PictureContainer.Invalidate();
-            Text = "Computed inverse in " + watch.Elapsed;
+            Text = "Computed inverse in " + watch.Elapsed.TotalMilliseconds + " ms";
         }
 
         private void buttonImport_Click(object sender, EventArgs e)
@@ -124,13 +155,37 @@ namespace CircleInversion
             {
                 // Draw image
                 using (var image = Bitmap.FromFile(openImageFile.FileName))
-                using (var g = Graphics.FromImage(bitmap))
+                using (var g = Graphics.FromImage(FinalImage))
                 {
-                    g.Clip = currentFilter.Circle.ToRegion();
-                    g.DrawImage(image, currentFilter.Circle.BoundingBox);
+                    g.Clip = Filter.Circle.ToRegion();
+                    g.DrawImage(image, Filter.Circle.BoundingBox);
                 }
                 PictureContainer.Invalidate();
             }
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            InitializeCircle();
+        }
+
+        private void circleSizeSelector_ValueChanged(object sender, EventArgs e)
+        {
+            InitializeCircle();
+        }
+
+        private void toolPencil_Click(object sender, EventArgs e)
+        {
+            toolLine.Checked = false;
+            toolPencil.Checked = true;
+            InitializeTool();
+        }
+
+        private void toolLine_Click(object sender, EventArgs e)
+        {
+            toolLine.Checked = true;
+            toolPencil.Checked = false;
+            InitializeTool();
         }
     }
 }
