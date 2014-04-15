@@ -55,8 +55,8 @@ namespace CircleInversion
         {
             this.Center = center;
             this.Radius = radius;
-            this.SquaredRadius = Radius * Radius;
-            this.BoundingBox = new RectangleF(Center.X - Radius, Center.Y - Radius, Diameter, Diameter);
+            this.SquaredRadius = radius * radius;
+            this.BoundingBox = new RectangleF(center.X - radius, center.Y - radius, radius * 2, radius * 2);
         }
 
         /// <summary>
@@ -134,6 +134,16 @@ namespace CircleInversion
         public double Distance(float x, float y)
         {
             return Math.Sqrt(SquaredDistance(x, y));
+        }
+
+        /// <summary>
+        /// Calculate the squared distance from a given point to the center of the circle.
+        /// </summary>
+        /// <param name="x">The point.</param>
+        /// <returns>The squared distance.</returns>
+        public double SquaredDistance(PointF point)
+        {
+            return SquaredDistance(point.X, point.Y);
         }
 
         /// <summary>

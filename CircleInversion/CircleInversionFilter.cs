@@ -112,6 +112,23 @@ namespace CircleInversion
         }
 
         /// <summary>
+        /// Filter a circle using circle inversion.
+        /// </summary>
+        /// <param name="circle">The circle to invert.</param>
+        /// <returns>The filtered circle.</returns>
+        public Circle FilterCircle(Circle input)
+        {
+            var s = Circle.SquaredRadius / 
+               (Circle.SquaredDistance(input.Center) - input.SquaredRadius);
+
+            return new Circle(
+               (float) (Circle.Center.X + s * (input.Center.X - Circle.Center.X)),
+               (float) (Circle.Center.Y + s * (input.Center.Y - Circle.Center.Y)),
+               (float) (Math.Abs(s) * input.Radius)
+            );
+        }
+
+        /// <summary>
         /// Filter a line, represented by two points, returning a segment of a full circle (arc).
         /// </summary>
         /// <param name="start">The starting point.</param>

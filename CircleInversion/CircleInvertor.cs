@@ -103,6 +103,8 @@ namespace CircleInversion
                 tool = new ToolPencil();
             if (toolLine.Checked)
                 tool = new ToolLine();
+            if (toolCircle.Checked)
+                tool = new ToolCircle();
         }
 
         private Bitmap PrepareBitmap(Bitmap existing, int width, int height)
@@ -211,15 +213,25 @@ namespace CircleInversion
 
         private void toolPencil_Click(object sender, EventArgs e)
         {
-            toolLine.Checked = false;
-            toolPencil.Checked = true;
-            InitializeTool();
+            UpdateTool(sender);
         }
 
         private void toolLine_Click(object sender, EventArgs e)
         {
-            toolLine.Checked = true;
-            toolPencil.Checked = false;
+            UpdateTool(sender);
+        }
+
+        private void toolCircle_Click(object sender, EventArgs e)
+        {
+            UpdateTool(sender);
+        }
+
+        private void UpdateTool(object sender)
+        {
+            foreach (ToolStripButton button in toolStripTools.Items.OfType<ToolStripButton>())
+            {
+                button.Checked = button == sender;
+            }
             InitializeTool();
         }
     }

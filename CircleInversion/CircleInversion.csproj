@@ -54,9 +54,11 @@
     <Compile Include="CircleInvertor.Designer.cs">
       <DependentUpon>CircleInvertor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Points.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\ITool.cs" />
+    <Compile Include="Tools\ToolCircle.cs" />
     <Compile Include="Tools\ToolLine.cs" />
     <Compile Include="Tools\ToolPencil.cs" />
     <EmbeddedResource Include="CircleInvertor.resx">
@@ -84,7 +86,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\DrawCircle.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DrawLine.png" />
   </ItemGroup>

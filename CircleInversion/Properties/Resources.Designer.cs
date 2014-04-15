@@ -63,6 +63,16 @@ namespace CircleInversion.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap DrawCircle {
+            get {
+                object obj = ResourceManager.GetObject("DrawCircle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DrawLine {
             get {
                 object obj = ResourceManager.GetObject("DrawLine", resourceCulture);
