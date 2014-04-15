@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutProgram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutProgram.Designer.cs">
+      <DependentUpon>AboutProgram.cs</DependentUpon>
+    </Compile>
     <Compile Include="Circle.cs" />
     <Compile Include="CircleInversionFilter.cs" />
     <Compile Include="CircleInvertor.cs">
@@ -61,6 +67,9 @@
     <Compile Include="Tools\ToolCircle.cs" />
     <Compile Include="Tools\ToolLine.cs" />
     <Compile Include="Tools\ToolPencil.cs" />
+    <EmbeddedResource Include="AboutProgram.resx">
+      <DependentUpon>AboutProgram.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CircleInvertor.resx">
       <DependentUpon>CircleInvertor.cs</DependentUpon>
     </EmbeddedResource>
@@ -94,6 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DrawPencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\About.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutDescription.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -234,5 +234,11 @@ namespace CircleInversion
             }
             InitializeTool();
         }
+
+        private void toolStripAbout_Click(object sender, EventArgs e)
+        {
+            AboutProgram about = new AboutProgram();
+            about.ShowDialog();
+        }
     }
 }

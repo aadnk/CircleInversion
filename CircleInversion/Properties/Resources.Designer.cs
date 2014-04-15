@@ -63,6 +63,29 @@ namespace CircleInversion.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap About {
+            get {
+                object obj = ResourceManager.GetObject("About", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A simple program for testing circle inversions.
+        ///
+        ///THANKS TO:
+        ///  * http://www.aha-soft.com/free-icons/free-dark-blue-cloud-icons/
+        ///  * http://momentumdesignlab.com/.
+        /// </summary>
+        internal static string AboutDescription {
+            get {
+                return ResourceManager.GetString("AboutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DrawCircle {
             get {
                 object obj = ResourceManager.GetObject("DrawCircle", resourceCulture);

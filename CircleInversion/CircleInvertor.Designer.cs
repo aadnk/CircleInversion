@@ -36,10 +36,12 @@
             this.circleSizeSelector = new System.Windows.Forms.NumericUpDown();
             this.labelCircleSize = new System.Windows.Forms.Label();
             this.toolStripTools = new System.Windows.Forms.ToolStrip();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolPencil = new System.Windows.Forms.ToolStripButton();
             this.toolLine = new System.Windows.Forms.ToolStripButton();
-            this.PictureContainer = new System.Windows.Forms.PictureBox();
             this.toolCircle = new System.Windows.Forms.ToolStripButton();
+            this.toolStripAbout = new System.Windows.Forms.ToolStripButton();
+            this.PictureContainer = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.circleSizeSelector)).BeginInit();
             this.toolStripTools.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PictureContainer)).BeginInit();
@@ -128,11 +130,18 @@
             this.toolStripTools.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolPencil,
             this.toolLine,
-            this.toolCircle});
+            this.toolCircle,
+            this.toolStripSeparator1,
+            this.toolStripAbout});
             this.toolStripTools.Location = new System.Drawing.Point(0, 0);
             this.toolStripTools.Name = "toolStripTools";
             this.toolStripTools.Size = new System.Drawing.Size(871, 25);
             this.toolStripTools.TabIndex = 0;
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolPencil
             // 
@@ -156,6 +165,26 @@
             this.toolLine.Text = "Draw Line";
             this.toolLine.Click += new System.EventHandler(this.toolLine_Click);
             // 
+            // toolCircle
+            // 
+            this.toolCircle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolCircle.Image = ((System.Drawing.Image)(resources.GetObject("toolCircle.Image")));
+            this.toolCircle.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolCircle.Name = "toolCircle";
+            this.toolCircle.Size = new System.Drawing.Size(23, 22);
+            this.toolCircle.Text = "Draw Circle";
+            this.toolCircle.Click += new System.EventHandler(this.toolCircle_Click);
+            // 
+            // toolStripAbout
+            // 
+            this.toolStripAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripAbout.Image = ((System.Drawing.Image)(resources.GetObject("toolStripAbout.Image")));
+            this.toolStripAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripAbout.Name = "toolStripAbout";
+            this.toolStripAbout.Size = new System.Drawing.Size(23, 22);
+            this.toolStripAbout.Text = "About";
+            this.toolStripAbout.Click += new System.EventHandler(this.toolStripAbout_Click);
+            // 
             // PictureContainer
             // 
             this.PictureContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -173,16 +202,6 @@
             this.PictureContainer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureContainer_MouseDown);
             this.PictureContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureContainer_MouseMove);
             this.PictureContainer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureContainer_MouseUp);
-            // 
-            // toolCircle
-            // 
-            this.toolCircle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolCircle.Image = ((System.Drawing.Image)(resources.GetObject("toolCircle.Image")));
-            this.toolCircle.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolCircle.Name = "toolCircle";
-            this.toolCircle.Size = new System.Drawing.Size(23, 22);
-            this.toolCircle.Text = "Draw Circle";
-            this.toolCircle.Click += new System.EventHandler(this.toolCircle_Click);
             // 
             // CircleInvertor
             // 
@@ -222,6 +241,8 @@
         private System.Windows.Forms.ToolStripButton toolPencil;
         private System.Windows.Forms.ToolStripButton toolLine;
         private System.Windows.Forms.ToolStripButton toolCircle;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton toolStripAbout;
     }
 }
 

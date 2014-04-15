@@ -1,0 +1,6 @@
+A simple program for testing circle inversions.
+
+Licensed under GPL v2.0
+
+THANKS TO:
+  * http://momentumdesignlab.com/
